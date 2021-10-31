@@ -5,6 +5,7 @@ interface GridProps {
     width: number,
     height: number,
     liveCells: CellLocations,
+    toggleCellConstructor: (point:Point) => () => undefined
 };
 
 export class Grid extends React.Component<GridProps> {
@@ -17,8 +18,11 @@ export class Grid extends React.Component<GridProps> {
         for (x = 0; x !== this.props.width; x++){
             let y: number;
             for (y = 0; y !== this.props.height; y++){ 
-                let cell = <div className="cell" style={{width: '100%', height:'100%', border:'1px solid black'}}/>;
-                console.log(x,y);
+                let point:Point = {x, y};
+                let style = {width: '100%', height:'100%', border:'1px solid black'};
+                let toggleCellCallback = this.props.toggleCellConstructor(point);
+
+                let cell = <div className="cell" style={style} onClick={toggleCellCallback}/>;
                 cells.push(cell);
             }
         }

@@ -29,11 +29,19 @@ export class App extends React.Component<{},AppState> {
   isNeighbour(a: Point, b: Point): boolean {
     return true;
   };
-  generateNewGrid(cells: CellLocations): CellLocations{
+  generateNewGrid(cells: CellLocations): CellLocations {
     return {};
   }
 
-  generateOnAddColCallback(){
+  toggleCellConstructor(point: Point) {
+    let self = this;
+    return function(): undefined{
+      console.log(point, self);
+      return undefined;
+    }
+  }
+
+  onAddCol() {
     const self = this;
     return function(){
       const newWidth = self.state.width+1;
@@ -42,7 +50,7 @@ export class App extends React.Component<{},AppState> {
       });
     }
   }
-  generateOnAddRowCallback(){
+  onAddRow() {
     const self = this;
     return function(){
       const newHeight = self.state.height+1;
@@ -54,9 +62,9 @@ export class App extends React.Component<{},AppState> {
   render () {
     return (
       <>
-        <Grid width={this.state.width} height={this.state.height} liveCells={this.state.liveCells}/>
-        <button onClick={this.generateOnAddRowCallback()}>Add Row</button>
-        <button onClick={this.generateOnAddColCallback()}>Add Column</button>
+        <Grid width={this.state.width} height={this.state.height} liveCells={this.state.liveCells} toggleCellConstructor={this.toggleCellConstructor.bind(this)}/>
+        <button onClick={this.onAddCol.bind(this)}>Add Column</button>
+        <button onClick={this.onAddRow.bind(this)}>Add Row</button>
         <button>Reset</button>
         <button>Next</button>
       </>
