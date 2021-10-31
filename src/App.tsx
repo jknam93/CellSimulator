@@ -9,11 +9,11 @@ import { GridHelpers } from './gridHelpers';
 const INITIAL_WIDTH:number = 10;
 const INITIAL_HEIGHT:number = 10;
 
-
 interface AppState {
   width: number,
   height: number,
-  liveCells: CellLocations
+  liveCells: CellLocations,
+  automaticGeneration: Boolean,
 }
 
 export class App extends React.Component<{},AppState> {
@@ -22,7 +22,8 @@ export class App extends React.Component<{},AppState> {
     this.state = {
       width: INITIAL_WIDTH,
       height: INITIAL_HEIGHT,
-      liveCells: {}
+      liveCells: {},
+      automaticGeneration: false,
     }
   }
 
@@ -58,13 +59,28 @@ export class App extends React.Component<{},AppState> {
     this.setState({
       width: INITIAL_WIDTH,
       height: INITIAL_HEIGHT,
-      liveCells: {}
+      liveCells: {},
+      automaticGeneration: false,
     });
   }
   onNext() {
     const newCells = GridHelpers.generateNewGrid(this.state.liveCells, this.state.width, this.state.height);
     this.setState({
       liveCells: newCells,
+    });
+  }
+  onAutomate() {
+    const self = this;
+    const automationCallback = ()=>{
+      self.onNext();
+      if (this.state.automaticGeneration) {
+        setTimeout(automationCallback, 400)
+      }
+    };
+    setTimeout(automationCallback, 400)
+
+    this.setState({
+      automaticGeneration: !this.state.automaticGeneration,
     });
   }
   render () {
@@ -75,6 +91,7 @@ export class App extends React.Component<{},AppState> {
         <button onClick={this.onAddRow.bind(this)}>Add Row</button>
         <button onClick={this.onReset.bind(this)}>Reset</button>
         <button onClick={this.onNext.bind(this)}>Next</button>
+        <button onClick={this.onAutomate.bind(this)}>Automate: {this.state.automaticGeneration ? 'ON' : 'OFF'}</button>
       </>
     );
   };
