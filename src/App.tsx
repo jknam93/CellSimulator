@@ -6,8 +6,8 @@ import { Grid } from './components/Grid';
 import { CellLocations, Point } from './types';
 import { GridHelpers } from './gridHelpers';
 
-const INITIAL_WIDTH:number = 10;
-const INITIAL_HEIGHT:number = 10;
+const INITIAL_WIDTH:number = 30;
+const INITIAL_HEIGHT:number = 30;
 
 interface AppState {
   width: number,
@@ -26,8 +26,6 @@ export class App extends React.Component<{},AppState> {
       automaticGeneration: false,
     }
   }
-
-
   /* CALL BACKS AND CALL BACK GENERATORS */
   //A function constructor that returns a function that toggle the cell @point
   toggleCellConstructor(point: Point) {
@@ -55,6 +53,7 @@ export class App extends React.Component<{},AppState> {
       height: newHeight,
     });
   }
+  //Reset the state of the grid
   onReset() {
     this.setState({
       width: INITIAL_WIDTH,
@@ -63,12 +62,14 @@ export class App extends React.Component<{},AppState> {
       automaticGeneration: false,
     });
   }
+  //Generate next grid
   onNext() {
     const newCells = GridHelpers.generateNewGrid(this.state.liveCells, this.state.width, this.state.height);
     this.setState({
       liveCells: newCells,
     });
   }
+  //Automatically generate a new grid every 400ms
   onAutomate() {
     const self = this;
     const automationCallback = ()=>{
@@ -88,10 +89,10 @@ export class App extends React.Component<{},AppState> {
       <>
         <Grid width={this.state.width} height={this.state.height} liveCells={this.state.liveCells} toggleCellConstructor={this.toggleCellConstructor.bind(this)}/>
         <button onClick={this.onAddCol.bind(this)}>Add Column</button>
-        <button onClick={this.onAddRow.bind(this)}>Add Row</button>
-        <button onClick={this.onReset.bind(this)}>Reset</button>
+        <button onClick={this.onAddRow.bind(this)}>Add Row</button><br/>
         <button onClick={this.onNext.bind(this)}>Next</button>
-        <button onClick={this.onAutomate.bind(this)}>Automate: {this.state.automaticGeneration ? 'ON' : 'OFF'}</button>
+        <button onClick={this.onAutomate.bind(this)}>Automate: {this.state.automaticGeneration ? 'ON' : 'OFF'}</button><br/>
+        <button onClick={this.onReset.bind(this)}>Reset</button>
       </>
     );
   };

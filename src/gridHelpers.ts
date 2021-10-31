@@ -22,9 +22,10 @@ export const GridHelpers = {
     } 
     return ret;
   },
+  //Return true if @b is a neighbour of @a
   isNeighbour(a: Point, b: Point, cells:CellLocations, width: number, height: number): boolean {
     var ret = false;
-    for (const direction of DIRECTIONS){
+    for (const direction of DIRECTIONS){ //Go through all directions of @a
       let dx = a.x + direction.x;
       let dy = a.y + direction.y;
 
@@ -32,13 +33,14 @@ export const GridHelpers = {
       dx = dx >= width ? dx % width : dx < 0 ? width + dx : dx;
       dy = dy >= width ? dy % height : dy < 0 ? width + dy : dy; 
 
-      if (dx === b.x && dy === b.y ) {
+      if (dx === b.x && dy === b.y ) { //Is neighbour if @b is in this list
           ret = true;
           break;
       }
     }
     return ret;
   },
+  //Get number of neighbours of @point that are alive
   numAliveNeighours(point: Point, cells: CellLocations,  width: number, height: number): number {
     const neighbourList = this.getNeighbours(point, cells, width, height);
     var numAliveNeighours = 0;
@@ -49,9 +51,10 @@ export const GridHelpers = {
     }
     return numAliveNeighours;
   },
+  //Get all neighbours of @point
   getNeighbours(point: Point, cells: CellLocations, width: number, height: number): Point[] {
     let ret = [];
-    for (const direction of DIRECTIONS){
+    for (const direction of DIRECTIONS){ //Go through all directions of @a
       let x = point.x + direction.x;
       let y = point.y + direction.y;
 
@@ -68,41 +71,42 @@ export const GridHelpers = {
   //Returns a new grid with point toggled @point
   toggleCell(point:Point, cells:CellLocations): CellLocations {
     if (this.isAlive(point, cells)){
-      delete cells[point.x][point.y];
+      delete cells[point.x][point.y]; //Kill cell if already alive
     } else {
-      if (cells[point.x] === undefined) {
+      if (cells[point.x] === undefined) { //Instantiate this column
         cells[point.x] = {};
       }
-      cells[point.x][point.y] = true;
+      cells[point.x][point.y] = true; //Set this cell to true for alive
     }
     return cells;
   },
-  
+  //Generates a new generation of the grid
   generateNewGrid(cells: CellLocations, width: number, height: number): CellLocations {
     let newLiveCells:CellLocations = {};
+    //First go through all the pooints
     for (const rowIndex in cells){
       const row = cells[rowIndex];
       for (const colIndex in row){
         const col = row[colIndex];
         let point:Point = {x: +rowIndex, y: +colIndex};
         let numNeighbours = GridHelpers.numAliveNeighours(point, cells, width, height);
-        //Check condition 1 and 3
+        //Check condition 2
         if (numNeighbours >= 2 && numNeighbours <= 3) {
           if (newLiveCells[point.x] === undefined) {
             newLiveCells[point.x] = {};
           }
-          newLiveCells[point.x][point.y] = true;
+          newLiveCells[point.x][point.y] = true; //Add to new grid
         }
 
         //Check condition 4
         let neighbourList:Point[] = GridHelpers.getNeighbours(point, cells, width, height);
-        for(const neighbour of neighbourList){
+        for(const neighbour of neighbourList){ //Go through all the neighbours
           //IF neighbour is empty AND neighbour is not alive in new grid AND has atleast 2 live neighbours
           if (!GridHelpers.isAlive(neighbour, newLiveCells) && !GridHelpers.isAlive(neighbour, cells) && GridHelpers.numAliveNeighours(neighbour, cells, width, height) === 3){
             if (newLiveCells[neighbour.x] === undefined) {
               newLiveCells[neighbour.x] = {};
             }
-            newLiveCells[neighbour.x][neighbour.y] = true;
+            newLiveCells[neighbour.x][neighbour.y] = true;//Add to new grid
           }
         }
 
@@ -225,6 +229,7 @@ export const GridHelpers = {
             '3': true,
         },
     }
+    
   }
 }
 GridHelpers.test();

@@ -19,8 +19,9 @@ export class Grid extends React.Component<GridProps> {
             for (x = 0; x !== this.props.width; x++){ 
                 let point:Point = {x, y};
                 let style = {width: '100%', height:'100%', backgroundColor: 'initial', fontSize: '8px', border: '0.2px solid grey'};
-                let toggleCellCallback = this.props.toggleCellConstructor(point);
+                let toggleCellCallback = this.props.toggleCellConstructor(point); //Create the toggle callback for this cell
 
+                //Color the cell in if it's alive
                 if (this.props.liveCells[x] !== undefined && this.props.liveCells[x][y] !== undefined ) {
                     style.backgroundColor = 'black';
                 }
@@ -33,7 +34,7 @@ export class Grid extends React.Component<GridProps> {
     };
     render() {
         return (
-            <div style={{display: 'grid', gap: '-1px', gridTemplateColumns: `repeat(${this.props.width}, 10px)`, gridTemplateRows: `repeat(${this.props.height}, 10px)`} }>
+            <div style={{display: 'grid', gap: '-1px', gridTemplateColumns: `repeat(${this.props.width}, 15px)`, gridTemplateRows: `repeat(${this.props.height}, 15px)`} }>
                 {this.renderCells()}
             </div>
         );
