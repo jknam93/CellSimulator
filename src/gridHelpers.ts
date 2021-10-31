@@ -114,6 +114,18 @@ export const GridHelpers = {
     }
     return newLiveCells;
   },
+  isEqual(cellsA:CellLocations, cellsB:CellLocations, width:number, height:number){
+    let ret = true;
+    let x;
+    for (x = 0; x !== width && ret; x++){
+        let y;
+        for (y = 0; y !== width && ret; y++){
+            const point:Point = { x, y };
+            ret = this.isAlive(point, cellsA) === this.isAlive(point, cellsB);;
+        }
+    }
+    return ret;
+  },
   test() {
     console.log('Testing');
     let testWidth=4;
@@ -213,6 +225,7 @@ export const GridHelpers = {
     console.assert(this.numAliveNeighours({x:4, y:2}, testCell2, testWidth, testHeight) === 0); //Should be true
     console.assert(this.numAliveNeighours({x:5, y:4}, testCell2, testWidth, testHeight) === 2); //Should be true
 
+
     //Test example scenario given at https://user-images.githubusercontent.com/7149052/53603476-bfb00e00-3c05-11e9-8862-1dfd31836dcd.jpg
     testWidth=6;
     testHeight=6;
@@ -230,6 +243,77 @@ export const GridHelpers = {
         },
     }
     
+    //Test isEqual
+    console.assert(this.isEqual(initial, initial, testWidth, testHeight));
+    console.assert(this.isEqual(initial, testCell2, testWidth, testHeight) === false);
+    let generation2Expected:CellLocations = {
+        '1': {
+            '2': true,
+        },
+        '2': {
+            '3': true,
+            '4': true,
+        },
+        '3': {
+            '2': true,
+            '3': true,
+        },
+    }
+    let generation3Expected:CellLocations = {
+        '1': {
+            '3': true,
+        },
+        '2': {
+            '4': true,
+        },
+        '3': {
+            '2': true,
+            '3': true,
+            '4': true,
+        },
+    }
+    let generation4Expected:CellLocations = {
+        '2': {
+            '2': true,
+            '4': true,
+        },
+        '3': {
+            '3': true,
+            '4': true,
+        },
+        '4': {
+            '3': true,
+        }
+    }
+    let generation5Expected:CellLocations = {
+        '2': {
+            '4': true,
+        },
+        '3': {
+            '2': true,
+            '4': true,
+        },
+        '4': {
+            '3': true,
+            '4': true,
+        }
+    }
+    let generation2 = this.generateNewGrid(initial, testWidth, testHeight);
+    let generation3 = this.generateNewGrid(generation2, testWidth, testHeight);
+    let generation4 = this.generateNewGrid(generation3, testWidth, testHeight);
+    let generation5 = this.generateNewGrid(generation4, testWidth, testHeight);
+
+    
+    console.assert(this.isEqual(generation2, generation2Expected, testWidth, testHeight)); //Test if grid is expected result
+    console.assert(this.isEqual(initial, generation2, testWidth, testHeight) === false); //Test if its different from previous generation
+    console.assert(this.isEqual(generation3, generation3Expected, testWidth, testHeight));//Test if grid is expected result
+    console.assert(this.isEqual(generation2, generation3, testWidth, testHeight) === false); //Test if its different from previous generation
+    console.assert(this.isEqual(generation4, generation4Expected, testWidth, testHeight));//Test if grid is expected result
+    console.assert(this.isEqual(generation4, generation3, testWidth, testHeight) === false); //Test if its different from previous generation
+    console.assert(this.isEqual(generation5, generation5Expected, testWidth, testHeight));//Test if grid is expected result
+    console.assert(this.isEqual(generation5, generation4, testWidth, testHeight) === false); //Test if its different from previous generation
+
+
   }
 }
 GridHelpers.test();
