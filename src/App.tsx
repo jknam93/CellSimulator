@@ -26,32 +26,6 @@ export class App extends React.Component<{},AppState> {
     }
   }
 
-  generateNewGrid(cells: CellLocations): CellLocations {
-    let newLiveCells:CellLocations = {};
-    for (const rowIndex in cells){
-      const row = cells[rowIndex];
-      for (const colIndex in row){
-        const col = row[colIndex];
-        let point:Point = {x: +rowIndex, y: +colIndex};
-        let numNeighbours = GridHelpers.numAliveNeighours(point, cells, this.state.width, this.state.height);
-        //Check condition 1 and 3
-        if (numNeighbours < 2 || numNeighbours > 3) {
-          newLiveCells = GridHelpers.toggleCell(point, cells);
-        }
-
-        //Check condition 4
-        let neighbourList:Point[] = GridHelpers.getNeighbours(point, cells, this.state.width, this.state.height);
-        for(const neighbour of neighbourList){
-          //IF neighbour is empty AND neighbour is not alive in new grid AND has atleast 2 live neighbours
-          if (GridHelpers.isAlive(neighbour, newLiveCells) && !GridHelpers.isAlive(neighbour, cells) && GridHelpers.numAliveNeighours(neighbour, cells, this.state.width, this.state.height) === 3){
-            newLiveCells = GridHelpers.toggleCell(neighbour, cells);
-          }
-        }
-
-      }
-    }
-    return newLiveCells;
-  }
 
   /* CALL BACKS AND CALL BACK GENERATORS */
   //A function constructor that returns a function that toggle the cell @point
@@ -88,7 +62,7 @@ export class App extends React.Component<{},AppState> {
     });
   }
   onNext() {
-    const newCells = this.generateNewGrid(this.state.liveCells);
+    const newCells = GridHelpers.generateNewGrid(this.state.liveCells, this.state.width, this.state.height);
     this.setState({
       liveCells: newCells,
     });

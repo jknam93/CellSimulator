@@ -66,7 +66,7 @@ export const GridHelpers = {
 
   },
   //Returns a new grid with point toggled @point
-  toggleCell(point:Point, cells:CellLocations): CellLocations{
+  toggleCell(point:Point, cells:CellLocations): CellLocations {
     if (this.isAlive(point, cells)){
       delete cells[point.x][point.y];
     } else {
@@ -76,6 +76,39 @@ export const GridHelpers = {
       cells[point.x][point.y] = true;
     }
     return cells;
+  },
+  
+  generateNewGrid(cells: CellLocations, width: number, height: number): CellLocations {
+    let newLiveCells:CellLocations = {};
+    for (const rowIndex in cells){
+      const row = cells[rowIndex];
+      for (const colIndex in row){
+        const col = row[colIndex];
+        let point:Point = {x: +rowIndex, y: +colIndex};
+        let numNeighbours = GridHelpers.numAliveNeighours(point, cells, width, height);
+        //Check condition 1 and 3
+        if (numNeighbours >= 2 && numNeighbours <= 3) {
+          if (newLiveCells[point.x] === undefined) {
+            newLiveCells[point.x] = {};
+          }
+          newLiveCells[point.x][point.y] = true;
+        }
+
+        //Check condition 4
+        let neighbourList:Point[] = GridHelpers.getNeighbours(point, cells, width, height);
+        for(const neighbour of neighbourList){
+          //IF neighbour is empty AND neighbour is not alive in new grid AND has atleast 2 live neighbours
+          if (!GridHelpers.isAlive(neighbour, newLiveCells) && !GridHelpers.isAlive(neighbour, cells) && GridHelpers.numAliveNeighours(neighbour, cells, width, height) === 3){
+            if (newLiveCells[neighbour.x] === undefined) {
+              newLiveCells[neighbour.x] = {};
+            }
+            newLiveCells[neighbour.x][neighbour.y] = true;
+          }
+        }
+
+      }
+    }
+    return newLiveCells;
   },
   test() {
     console.log('Testing');
@@ -171,11 +204,27 @@ export const GridHelpers = {
 
     //Test getNumLiveNeighbours
     console.assert(this.numAliveNeighours({x:1, y:2}, testCell2, testWidth, testHeight) === 4); //Should be true
-    console.log(this.getNeighbours({x:0, y:5}, testCell2, testWidth, testHeight), this.numAliveNeighours({x:0, y:5}, testCell2, testWidth, testHeight));
     console.assert(this.numAliveNeighours({x:0, y:5}, testCell2, testWidth, testHeight) === 4); //Should be true
     
     console.assert(this.numAliveNeighours({x:4, y:2}, testCell2, testWidth, testHeight) === 0); //Should be true
     console.assert(this.numAliveNeighours({x:5, y:4}, testCell2, testWidth, testHeight) === 2); //Should be true
+
+    //Test example scenario given at https://user-images.githubusercontent.com/7149052/53603476-bfb00e00-3c05-11e9-8862-1dfd31836dcd.jpg
+    testWidth=6;
+    testHeight=6;
+    let initial:CellLocations = {
+        '1': {
+            '3': true,
+        },
+        '2': {
+            '1': true,
+            '3': true,
+        },
+        '3': {
+            '2': true,
+            '3': true,
+        },
+    }
   }
 }
 GridHelpers.test();
