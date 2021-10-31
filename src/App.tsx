@@ -32,11 +32,24 @@ export class App extends React.Component<{},AppState> {
   generateNewGrid(cells: CellLocations): CellLocations {
     return {};
   }
+  toggleCell(cells: CellLocations, point: Point) {
 
+  }
   toggleCellConstructor(point: Point) {
     let self = this;
     return function(): undefined{
-      console.log(point, self);
+      let cells = self.state.liveCells;
+      if (cells[point.x] !== undefined && cells[point.x][point.y] !== undefined ) {
+        delete cells[point.x][point.y];
+      } else {
+        if (cells[point.x] === undefined) {
+          cells[point.x] = {};
+        }
+        cells[point.x][point.y] = true;
+      }
+      self.setState({
+        liveCells: cells,
+      })
       return undefined;
     }
   }

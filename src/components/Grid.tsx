@@ -19,8 +19,12 @@ export class Grid extends React.Component<GridProps> {
             let y: number;
             for (y = 0; y !== this.props.height; y++){ 
                 let point:Point = {x, y};
-                let style = {width: '100%', height:'100%', border:'1px solid black'};
+                let style = {width: '100%', height:'100%', border:'1px solid black', backgroundColor: 'initial'};
                 let toggleCellCallback = this.props.toggleCellConstructor(point);
+
+                if (this.props.liveCells[x] !== undefined && this.props.liveCells[x][y] !== undefined ) {
+                    style.backgroundColor = 'black';
+                }
 
                 let cell = <div className="cell" style={style} onClick={toggleCellCallback}/>;
                 cells.push(cell);
